@@ -1,4 +1,5 @@
 import { main, show, SortBy } from '../src/main';
+// import { show, SortBy } from '../src/main';
 import { ClientUser, Demand, ExecutorUser } from '../src/types';
 import { none, some } from '../src/fp/maybe';
 import { getOrElse, left, right } from '../src/fp/either';
@@ -53,7 +54,7 @@ name: Philip, distance: 30.364, reward: 600`));
       expect(show(SortBy.reward)(clientsWithoutNone)(executorWithoutPossibilities)).toStrictEqual(left(`This executor cannot meet the demands of any client!`));
     });
 
-    it('show returns left with the message when cannot find clients', () => {
+    it('show returns right with the message when executor can reach all clients', () => {
       const executorWithAllPossibilities = {
         ...executor,
         possibilities: [Demand.Fishing, Demand.Fighting, Demand.Driving]
