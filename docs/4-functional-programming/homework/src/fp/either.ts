@@ -40,6 +40,9 @@ export const isLeft = <E, A>(val: Either<E, A>): val is Left<E> => val._tag === 
  * Just like with arrays, when we maps Array<A> to Array<B>
  */
 export const map = <E, A, B>(fn: (a: A) => B) => (fa: Either<E, A>): Either<E, B> => (
+    isLeft(fa)
+        ? fa
+        : right(fn(fa.right))
 );
 
 /**
@@ -68,7 +71,11 @@ export const flatten = <E, A>(a: Either<E, Either<E, A>>): Either<E, A> => (
  * Either the Promise is resolved - should return Right
  * Or the Promise is rejected - should return Left
  */
-export const fromPromise = <E, A>(promise: Promise<A>): Promise<Either<E, A>> => ();
+export const fromPromise = <E, A>(promise: Promise<A>): Promise<Either<E, A>> => (
+    promise
+        .then(value => right(value))
+        .catch(value => left(value))
+);
 /**
  * Get the value from the Right, or call onLeft function
  * See examples in the tests
@@ -86,5 +93,6 @@ export const getOrElse = <E, A>(onLeft: (e: E) => A) => (ma: Either<E, A>): A =>
  * reduce Array<A> => B
  */
 export const fold = <E, A, B>(onLeft: (e: E) => B, onRight: (a: A) => B) => (ma: Either<E, A>): B => (
+    isRight(ma) ? onRight(ma.right) : onLeft(ma.left)
 );
 
