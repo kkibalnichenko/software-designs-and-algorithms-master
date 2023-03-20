@@ -34,15 +34,7 @@ export class Shipment {
         fetchID().subscribe((id: number) => shipmentID = id);
         return shipmentID;
     }
-    public static ship(item: ShipmentData): string {
-        return `Shipment with the ID ${item.shipmentID} will be picked up from ${item.fromAddress} ${item.fromZipCode} and shipped to ${item.toAddress} ${item.toZipCode}\nCost = ${(item.weight * 0.39).toFixed(2)}`
+    public static ship(item: ShipmentData, cost: string): string {
+        return `Shipment with the ID ${item.shipmentID} will be picked up from ${item.fromAddress} ${item.fromZipCode} and shipped to ${item.toAddress} ${item.toZipCode}\nCost = ${cost}`
     }
 }
-
-// class Letter extends Shipment {}
-// const shipment = new Shipment();
-// console.log(shipment.getShipmentID())
-// console.log(shipment.getShipmentID())
-// console.log(shipment.getShipmentID())
-// console.log(shipment.getShipmentID())
-// console.log(shipment.getShipmentID())

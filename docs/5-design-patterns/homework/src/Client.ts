@@ -1,12 +1,22 @@
-import { Shipment, ShipmentData } from "./Shipment";
-import { fetchShipment } from "./fetching.service";
+import { Shipment, ShipmentData } from './Shipment';
+import { fetchShipment } from './fetching.service';
+import { AirEastShipper, ChicagoSprintShipper, PacificParcelShipper } from './Shipper';
+import { Context } from './Context';
 
 export class Client {
     private shipment: ShipmentData;
 
     public processing() {
         const shipment = Shipment.getInstance(this.getShipmentData());
-        console.log(Shipment.ship(shipment.shipmentItem));
+        const { weight, fromZipCode } = shipment.shipmentItem;
+        const arrayChicagoSprint = ['4', '5', '6'];
+        const arrayPacificParcel = ['7', '8', '9'];
+        let ctx = new Context();
+        arrayChicagoSprint.includes(fromZipCode.slice(0,1)) ?
+            ctx.setShipper(new ChicagoSprintShipper()) : arrayPacificParcel.includes(fromZipCode.slice(0,1)) ?
+                ctx.setShipper(new PacificParcelShipper()) : ctx.setShipper(new AirEastShipper());
+
+        console.log(Shipment.ship(shipment.shipmentItem, ctx.getShipperCost(weight)));
     }
 
     private getShipmentData(): ShipmentData {
