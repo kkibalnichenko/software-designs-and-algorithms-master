@@ -1,4 +1,4 @@
-import { ShipmentDataType } from './Shipment';
+import { ShipmentDataType } from './shipment.model';
 
 export interface Shipper {
     getCost(weight: number, type: ShipmentDataType): string;

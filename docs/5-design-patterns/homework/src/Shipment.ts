@@ -1,30 +1,7 @@
 import { fetchID } from './fetching.service';
+import { Ship, ShipmentData, ShipmentDataType } from './shipment.model';
 
-export interface ShipmentData {
-    readonly shipmentID: number;
-    readonly weight: number;
-    fromAddress: string;
-    fromZipCode: string;
-    toAddress: string;
-    toZipCode: string;
-    type?: ShipmentDataType;
-}
-
-export enum ShipmentDataType {
-    letter,
-    package,
-    oversize
-}
-
-export interface Address {
-    street: string;
-    city: string;
-    state: string;
-}
-
-export type ShipmentType = Letter | Package | Oversize;
-
-export abstract class Shipment {
+export abstract class Shipment implements Ship {
     public shipmentItem: ShipmentData;
 
     protected constructor(shipmentItem: ShipmentData) {
@@ -36,7 +13,8 @@ export abstract class Shipment {
         fetchID().subscribe((id: number) => shipmentID = id);
         return shipmentID;
     }
-    public static ship(item: ShipmentData, cost: string): string {
+
+    public ship(item: ShipmentData, cost: string): string {
         return `Shipment with the ID ${item.shipmentID} will be picked up from ${item.fromAddress} ${item.fromZipCode} and shipped to ${item.toAddress} ${item.toZipCode}\nCost = ${cost}`
     }
 }

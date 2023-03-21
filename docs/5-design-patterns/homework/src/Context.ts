@@ -1,5 +1,5 @@
 import { Shipper } from './Shipper';
-import { ShipmentDataType } from './Shipment';
+import { ShipmentDataType } from './shipment.model';
 
 export class Context {
     private shipper: Shipper;

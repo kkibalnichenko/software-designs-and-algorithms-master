@@ -1,4 +1,4 @@
-import { Address, ShipmentData } from './Shipment';
+import {Address, ShipmentData, SpecialCodes} from './shipment.model';
 
 function makeID() {
     let count = 1;
@@ -24,3 +24,5 @@ export const shipment: ShipmentData = {
     toAddress: `${toAddress.street}, ${toAddress.city}, ${toAddress.state}`,
     toZipCode: '67721',
 }
+
+export const specialCodes: Array<SpecialCodes> = [SpecialCodes.ReturnReceiptRequested, SpecialCodes.Fragile];

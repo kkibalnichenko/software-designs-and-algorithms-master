@@ -1,4 +1,5 @@
-import { Letter, Oversize, Package, Shipment, ShipmentData, ShipmentType } from './Shipment';
+import { Letter, Oversize, Package, Shipment } from './Shipment';
+import { ShipmentData, ShipmentType } from './shipment.model';
 import { fetchShipment } from './fetching.service';
 import {
     AirEastShipper,
@@ -8,6 +9,7 @@ import {
     PacificParcelShipper, PacificParcelShipperImplementer
 } from './Shipper';
 import { Context } from './Context';
+import { SpecialCodesShipmentDecorator } from './ShipmentDecorator';
 
 export class Client {
     private shipmentData: ShipmentData;
@@ -30,7 +32,7 @@ export class Client {
                     ctx.setShipper(new PacificParcelShipper(new PacificParcelShipperImplementer())) :
                         ctx.setShipper(new AirEastShipper(new AirEastShipperImplementer()));
 
-        console.log(Shipment.ship(shipment.shipmentItem, ctx.getShipperCost(weight, type)));
+        console.log((new SpecialCodesShipmentDecorator(shipment)).ship(shipment.shipmentItem, ctx.getShipperCost(weight, type)));
     }
 
     private getShipmentData(): ShipmentData {
