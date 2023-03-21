@@ -1,29 +1,53 @@
-import { Shipment, ShipmentData } from './Shipment';
+import { Letter, Oversize, Package, Shipment, ShipmentData, ShipmentType } from './Shipment';
 import { fetchShipment } from './fetching.service';
-import { AirEastShipper, ChicagoSprintShipper, PacificParcelShipper } from './Shipper';
+import {
+    AirEastShipper,
+    AirEastShipperImplementer,
+    ChicagoSprintShipper,
+    ChicagoSprintShipperImplementer,
+    PacificParcelShipper, PacificParcelShipperImplementer
+} from './Shipper';
 import { Context } from './Context';
 
 export class Client {
-    private shipment: ShipmentData;
+    private shipmentData: ShipmentData;
+    private arrayChicagoSprint: string[] = ['4', '5', '6'];
+    private arrayPacificParcel: string[] = ['7', '8', '9'];
 
     public processing() {
-        const shipment = Shipment.getInstance(this.getShipmentData());
-        const { weight, fromZipCode } = shipment.shipmentItem;
-        const arrayChicagoSprint = ['4', '5', '6'];
-        const arrayPacificParcel = ['7', '8', '9'];
-        let ctx = new Context();
-        arrayChicagoSprint.includes(fromZipCode.slice(0,1)) ?
-            ctx.setShipper(new ChicagoSprintShipper()) : arrayPacificParcel.includes(fromZipCode.slice(0,1)) ?
-                ctx.setShipper(new PacificParcelShipper()) : ctx.setShipper(new AirEastShipper());
+        this.shipmentData = this.getShipmentData();
+        if (this.shipmentData.weight <= 0) {
+            return new Error('Shipment has to have same weight');
+        }
 
-        console.log(Shipment.ship(shipment.shipmentItem, ctx.getShipperCost(weight)));
+        const shipment: ShipmentType = this.getInstance();
+        const { weight, fromZipCode, type } = shipment.shipmentItem;
+        const firstSymbolFromZipCode = fromZipCode.slice(0,1);
+        let ctx = new Context();
+        this.arrayChicagoSprint.includes(firstSymbolFromZipCode) ?
+            ctx.setShipper(new ChicagoSprintShipper(new ChicagoSprintShipperImplementer())) :
+                this.arrayPacificParcel.includes(firstSymbolFromZipCode) ?
+                    ctx.setShipper(new PacificParcelShipper(new PacificParcelShipperImplementer())) :
+                        ctx.setShipper(new AirEastShipper(new AirEastShipperImplementer()));
+
+        console.log(Shipment.ship(shipment.shipmentItem, ctx.getShipperCost(weight, type)));
     }
 
     private getShipmentData(): ShipmentData {
-        fetchShipment().subscribe((shipment: ShipmentData) => this.shipment = shipment);
-        if (this.shipment.shipmentID === 0)
-            this.shipment = {...this.shipment, shipmentID: Shipment.getShipmentID()};
-        return this.shipment;
+        let item: ShipmentData;
+        fetchShipment().subscribe((shipment: ShipmentData) => item = shipment);
+        if (item.shipmentID === 0) item = {...item, shipmentID: Shipment.getShipmentID()};
+
+        return item;
+    }
+
+    private getInstance(): ShipmentType {
+        let shipment: ShipmentType;
+        this.shipmentData.weight <= 15 ? shipment = Letter.getInstance(this.shipmentData) :
+            this.shipmentData.weight <= 160 ? shipment = Package.getInstance(this.shipmentData) :
+                shipment = Oversize.getInstance(this.shipmentData);
+
+        return shipment;
     }
 }
 

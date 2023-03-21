@@ -1,4 +1,5 @@
 import { Shipper } from './Shipper';
+import { ShipmentDataType } from './Shipment';
 
 export class Context {
     private shipper: Shipper;
@@ -7,7 +8,7 @@ export class Context {
         this.shipper = s;
     }
 
-    getShipperCost(weight: number) {
-        return this.shipper.getCost(weight);
+    getShipperCost(weight: number, type: ShipmentDataType) {
+        return this.shipper.getCost(weight, type);
     }
 }
