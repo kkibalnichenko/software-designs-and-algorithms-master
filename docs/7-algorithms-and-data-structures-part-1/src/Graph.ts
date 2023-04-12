@@ -2,8 +2,12 @@ import {WeightedGraph} from "./WeightedGraph";
 import {Vertex} from "./Vertex";
 import {Edge} from "./Edge";
 
+export interface VerticesPath {
+    [key: string]: number;
+}
+
 export class Graph implements WeightedGraph<Vertex>{
-    public vertices: { [key: string]: any } = {};
+    public vertices: Record<string, VerticesPath> = {};
 
     addVertex(value: string): void {
         if (!this.vertices[value]) {
